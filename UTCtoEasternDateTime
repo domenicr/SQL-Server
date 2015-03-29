@@ -1,0 +1,48 @@
+CREATE FUNCTION dbo.UTCtoEasternDateTime(@pUTCDateTime datetime)
+RETURNS DATETIME
+AS
+BEGIN 
+   DECLARE @vFirstOfDSTStartMonth DATETIME
+   DECLARE @vFirstOfDSTEndMonth  DATETIME
+   DECLARE @vDSTStartDate DATETIME 
+   DECLARE @vDSTEndDate DATETIME
+   DECLARE @vUTCtoLocalDateTime  DATETIME
+   DECLARE @pStandardTimeOffset  INTEGER
+   DECLARE @pDSTOffset INTEGER
+
+   --SET DATEFIRST 7 this does not work in functions
+   SET @pStandardTimeOffset  = -5
+   SET @pDSTOffset = -4
+
+   IF YEAR(@pUTCDateTime) >= 2007
+   BEGIN
+      --calc first day of march from UTCDateTime
+      SET @vFirstOfDSTStartMonth  = DATEADD(MONTH, 2, DATEADD(YEAR, YEAR(@pUTCDateTime) - 1900, 0))
+      --SET @vFirstOfDSTStartMonth  = LTRIM(YEAR(@pUTCDateTime)) + '/03/01'
+      --calc first day of november from UTCDateTime
+      SET @vFirstOfDSTEndMonth  = DATEADD(MONTH, 10, DATEADD(YEAR, YEAR(@pUTCDateTime) - 1900, 0))
+      --SET @vFirstOfDSTEndMonth = LTRIM(YEAR(@pUTCDateTime)) + '/11/01'
+      SET @vDSTStartDate = DATEADD(HOUR, 2, DATEADD(day,( ( 15 -  DATEPART(dw, @vFirstOfDSTStartMonth ) )  % 7 )+ 7, @vFirstOfDSTStartMonth ))
+      SET @vDSTEndDate = DATEADD(HOUR, 2, DATEADD(day, ( ( 8 - DATEPART(dw, @vFirstOfDSTEndMonth) ) % 7  ), @vFirstOfDSTEndMonth))
+   END   
+   ELSE
+   BEGIN   
+      --calc first sunday of april from UTCDateTime
+      --SET @vFirstOfDSTStartMonth = LTRIM(YEAR(@pUTCDateTime)) + '/04/01'
+      SET @vFirstOfDSTStartMonth  = DATEADD(MONTH, 3, DATEADD(YEAR, YEAR(@pUTCDateTime) - 1900, 0))
+      SET @vDSTStartDate = DATEADD(HOUR, 2, DATEADD(day, ( ( 8 - DATEPART(dw, @vFirstOfDSTStartMonth) ) % 7  ), @vFirstOfDSTStartMonth))
+
+      --calc last sunday of october from UTCDateTime
+      --SET @vFirstOfDSTEndMonth = LTRIM(YEAR(@pUTCDateTime)) + '/10/01'
+      SET @vFirstOfDSTEndMonth  = DATEADD(MONTH, 9, DATEADD(YEAR, YEAR(@pUTCDateTime) - 1900, 0))
+      SET @vDSTEndDate = DATEADD(day,DATEDIFF(day,'19000107',DATEADD(month,DATEDIFF(MONTH,0,@vFirstOfDSTEndMonth),30))/7*7,'19000107')
+   END
+
+
+   IF @pUTCDateTime BETWEEN @vDSTStartDate AND @vDSTEndDate
+      SET @vUTCtoLocalDateTime  = DATEADD(hour, @pDSTOffset, @pUTCDateTime)
+   ELSE
+      SET @vUTCtoLocalDateTime  = DATEADD(hour, @pStandardTimeOffset, @pUTCDateTime)
+
+   RETURN @vUTCtoLocalDateTime
+END
