@@ -16,15 +16,15 @@ BEGIN
    SET @vSubStartPos = 1
    SET @vIndex = 0
    
+   
    DO: 
       
       SET @vSubStartPos = @vFoundPos + 1
       SET @vFoundPos = ISNULL(CHARINDEX( @pDelimiter, @pStringToParse, @vFoundPos + 1), 0)
       
-      SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, CASE @vFoundPos WHEN 0 THEN LEN(@pStringToParse + '*') -1  ELSE @vFoundPos - @vSubStartPos END ) 
-      --SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, COALESCE(NULLIF(@vFoundPos, 0)+1, LEN(@pStringToParse + '*'))-@vSubStartPos) 
+      --SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, CASE @vFoundPos WHEN 0 THEN LEN(@pStringToParse + '*') -1  ELSE @vFoundPos - @vSubStartPos END ) 
+      SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, COALESCE(NULLIF(@vFoundPos, 0), LEN(@pStringToParse + '*'))-@vSubStartPos) 
       
-
       IF (ISNULL(@pExcludeEmpty, 0) = 0 OR LEN(ISNULL(@vParsedString, '') + '*') -1 > 0)
       BEGIN
          
