@@ -20,9 +20,10 @@ BEGIN
       
       --SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, CASE @vFoundPos WHEN 0 THEN LEN(@pStringToParse + '*') -1  ELSE @vFoundPos - @vSubStartPos END ) 
       SET @vParsedString = SUBSTRING(@pStringToParse, @vSubStartPos, COALESCE(NULLIF(@vFoundPos, 0), LEN(@pStringToParse + '*'))-@vSubStartPos) 
-      
+     
       --verfiy if string has non terminated text qualifier
-      IF ((@pTextQualifier = SUBSTRING(@vParsedString, 1, 1)) AND (@pTextQualifier <> SUBSTRING(@vParsedString, LEN(@vParsedString + '*')-1, 1)))
+      IF (((@pTextQualifier = SUBSTRING(@vParsedString, 1, 1)) AND (@pTextQualifier <> SUBSTRING(@vParsedString, LEN(@vParsedString + '*')-1, 1)))
+             OR ((@pTextQualifier <> SUBSTRING(@vParsedString, 1, 1)) AND (@pTextQualifier = SUBSTRING(@vParsedString, LEN(@vParsedString + '*')-1, 1))))
             --AND ((LEN(@vParsedString + '*') - LEN(REPLACE(@vParsedString, @pTextQualifier, '') + '*')) % 2 <> 0)
             AND @vFoundPos > 0
          GOTO DO
