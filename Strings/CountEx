@@ -1,0 +1,28 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[CountEx]
+(
+	-- Add the parameters for the function here
+	@pString VARCHAR(MAX),
+	@pFind VARCHAR(MAX),
+	@nStart BIGINT = 1
+)
+RETURNS BIGINT
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @vStringCount BIGINT
+
+      
+   SET @pString = SUBSTRING(@pString, @nStart, LEN(@pString+'*')-1)
+	SELECT @vStringCount = ((LEN(@pString + '*')-1) - (LEN(REPLACE(@pString, @pFind, '')+'*')-1)) / COALESCE(NULLIF((LEN(@pFind+'*')-1), 0), 1)
+
+	-- Return the result of the function
+	RETURN @vStringCount
+
+END
+GO
+
+select [dbo].[CountEx]('Hello', 'e', DEFAULT)
