@@ -1,0 +1,22 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[StringLen]
+(
+	-- Add the parameters for the function here
+	@pString VARCHAR(MAX)
+)
+RETURNS BIGINT
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @vStringLen BIGINT
+
+	SELECT @vStringLen = LEN(@pString + '*')-1
+
+	-- Return the result of the function
+	RETURN @vStringLen
+
+END
+GO
