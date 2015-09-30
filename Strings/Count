@@ -1,0 +1,45 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[Count]
+(
+	-- Add the parameters for the function here
+	@pString VARCHAR(MAX),
+	@pFind VARCHAR(MAX)
+)
+RETURNS BIGINT
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @vStringCount BIGINT
+
+	SELECT @vStringCount = ((LEN(@pString + '*')-1) - (LEN(REPLACE(@pString, @pFind, '')+'*')-1)) / COALESCE(NULLIF((LEN(@pFind+'*')-1), 0), 1)
+
+	-- Return the result of the function
+	RETURN @vStringCount
+
+END
+GO
+
+select [dbo].[Count]('Hello', 'e') --1
+select [dbo].[Count]('Hello', 'l') --2
+select [dbo].[Count]('Hello', 'll') --1
+select [dbo].[Count]('Helllo', 'll') --1
+select [dbo].[Count]('Hello   ', 'll') --1
+select [dbo].[Count]('Hello   ', 'l') --2
+select [dbo].[Count]('Hello   ', '') --0
+select [dbo].[Count]('Hello   ', ' ') --3
+select [dbo].[Count]('Hello   ', '  ') --1
+select [dbo].[Count]('Hello   ', '   ') --1
+select [dbo].[Count]('Hello   ', '    ') --0
+select [dbo].[Count](' 1 2 3 ', ' ') --4
+select [dbo].[Count](' ', ' ') --1
+select [dbo].[Count]('Hello   ', NULL) --null
+select [dbo].[Count]('', '') --0
+select [dbo].[Count]('', ' ') --0
+select [dbo].[Count](' ', '') --0
+select [dbo].[Count](NULL, NULL) --null
+select [dbo].[Count](NULL, '1') --null
+select [dbo].[Count]('   ', NULL) --null
+
