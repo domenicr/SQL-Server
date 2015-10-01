@@ -1,0 +1,36 @@
+/****** Object:  UserDefinedFunction [dbo].[AHOPadValue]    Script Date: 10/01/2015 13:44:58 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER     FUNCTION [dbo].[AHOPadValue] ( @pPadValue   VARCHAR(2048)
+                                        , @pPadChar CHAR(1)
+                                        , @pPadLen  INT
+                                        , @pPadAlignment  CHAR(1) -- <:Left; >:Right
+                                        )
+RETURNS VARCHAR(2048)
+/* ====================================================================================================================
+DESCRIPTION
+   Function that returns a string built with @pPadValue and a replicated value of @pPadChar for 
+   the difference in length of @pPadValue and @pPadlen. @pPadAlignment determines the alignment
+   of the pad string.
+
+HISTORIQUE
+
+DATE         PROGRAMMEUR     ACTION
+2011/06/29   Domenic Rico    Création
+===================================================================================================================== */
+BEGIN 
+
+   -----------------------------------
+   -- Déclaration des variables
+   -----------------------------------
+   DECLARE @vResult VARCHAR(2048)
+   DECLARE @vPadString VARCHAR(2048)
+
+   SELECT @vPadString = ISNULL(REPLICATE(@pPadChar, @pPadLen - DATALENGTH(@pPadValue)), '')
+   SELECT @vResult = CASE @pPadAlignment WHEN '<' THEN @vPadString + @pPadValue ELSE @pPadValue + @vPadString END
+      
+   RETURN (@vResult)
+
+END
