@@ -1,0 +1,39 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[CountSeq]
+(
+	-- Add the parameters for the function here
+	@pString VARCHAR(MAX),
+	@pFind VARCHAR(MAX),
+	@nStart BIGINT = 1
+)
+RETURNS BIGINT
+AS
+BEGIN
+	-- Declare the return variable here
+	DECLARE @vStringCount BIGINT
+   DECLARE @vFoundPos BIGINT
+   DECLARE @vPrevFoundPos BIGINT
+
+   SET @vStringCount = 0
+         
+   START:
+   SET @vPrevFoundPos = @vFoundPos
+   SET @vFoundPos = CHARINDEX(@pFind, @pString, @nStart)
+
+   
+   SET @nStart = @vFoundPos + (LEN(@pFind+'*')-1)
+   
+   IF @vFoundPos > 0 AND ( (@vPrevFoundPos IS NULL) OR ((@vPrevFoundPos + (LEN(@pFind+'*')-1)) = @vFoundPos ))
+   BEGIN
+      SET @vStringCount = @vStringCount + 1
+      GOTO START
+   END
+
+	-- Return the result of the function
+	RETURN @vStringCount
+
+END
+GO
