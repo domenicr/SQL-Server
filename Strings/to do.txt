@@ -1,3 +1,6 @@
-Len() --includes spaces
--Count() --counts occurences of a char from specified position
--CountSequencial() --counts consecutive sequential occurences of a char from specified position
+Len() --includes spaces - done
+-Count() --counts occurences of a char from specified position - done
+-CountSequencial() --counts consecutive sequential occurences of a char from specified position - done
+Concat()
+Min
+Max
