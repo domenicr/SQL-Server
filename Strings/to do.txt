@@ -4,3 +4,4 @@ Len() --includes spaces - done
 Concat()
 Min
 Max
+CharIndexRev
