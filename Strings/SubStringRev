@@ -31,3 +31,14 @@ AS
  
    END 
 GO 
+select dbo.[SubStringRev]('', 3, 0)
+select dbo.[SubStringRev]('abc', 2, 4)
+select dbo.[SubStringRev](NULL, 3, 0)
+select SubString('abc', 3, 1)
+select SubString('abc', 2, 1)
+select SubString('abc', 1, 1)
+select SubString('abc', 1, 2)
+select '''' + SubString('abc', 0, 1) + ''''
+select '''' + SubString('abc', 0, NULL) + ''''
+
+select charindex('a', 'ABC')
