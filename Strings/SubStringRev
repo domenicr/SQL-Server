@@ -5,34 +5,22 @@ GO
 CREATE FUNCTION [dbo].[SubStringRev] ( 
    -- Add the parameters for the function here 
    @pString VARCHAR(MAX), 
-   @nEnd BIGINT,
+   @nStart BIGINT,
    @nLen BIGINT
 ) 
 RETURNS VARCHAR(MAX)
 AS 
    BEGIN 
       -- Declare the return variable here 
-      DECLARE @vStart BIGINT 
-      DECLARE @vString VARCHAR(MAX)
  
-      --validate @nEnd
-      --IF @nEnd > LEN(@pString+'*')-1
-      --   SET @nEnd = LEN(@pString+'*')-1
-      --SET @nEnd = ISNULL(@nEnd, LEN(@pString+'*')-1)
-      
-      --calc start
-      SET @vStart = (@nEnd - @nLen) + 1
-      
-      SET @vString = SUBSTRING(@pString, @vStart, @nLen)
+      RETURN SUBSTRING(@pString, (@nStart - @nLen) + 1, @nLen)
       
       -- Return the result of the function 
-      RETURN @vString
-
  
    END 
 GO 
 select dbo.[SubStringRev]('', 3, 0)
-select dbo.[SubStringRev]('abc', 2, 4)
+select dbo.[SubStringRev]('abc', 2, 7)
 select dbo.[SubStringRev](NULL, 3, 0)
 select SubString('abc', 3, 1)
 select SubString('abc', 2, 1)
