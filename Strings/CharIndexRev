@@ -1,0 +1,50 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[CharIndexRev]
+(
+	-- Add the parameters for the function here
+	@pString VARCHAR(MAX),
+	@pFind VARCHAR(MAX),
+	@nStartPos BIGINT
+)
+RETURNS BIGINT
+AS
+BEGIN
+	-- Declare the return variable here
+   DECLARE @vFoundPos BIGINT
+   --DECLARE @vStartPos BIGINT
+   
+   SET @vFoundPos = 0
+
+   IF (@nStartPos>LEN(@pString+'*')-1)
+      SET @nStartPos = LEN(@pString+'*')-1
+      
+   IF @nStartPos <= 0 
+      SET @nStartPos = 0
+   
+   SET @pString = SUBSTRING(@pString, 1, @nStartPos)
+   
+   START:   
+   SET @vFoundPos = CHARINDEX(@pFind, @pString, @nStartPos)
+   SET @nStartPos = @nStartPos - 1
+      
+   IF @vFoundPos = 0 AND @nStartPos > 0
+      GOTO START
+
+	-- Return the result of the function
+	RETURN @vFoundPos
+
+END
+GO
+--
+select dbo.[CharIndexRev]('abcdabcdabcd', 'ab', 1000)
+select dbo.[CharIndexRev]('abc', 'ab', 4)
+select dbo.[CharIndexRev]('abac', 'a', 3)
+select dbo.[CharIndexRev]('abac', 'A', 3)
+select dbo.[CharIndexRev]('abac', '1', 5)
+select dbo.[CharIndexRev]('abac', '1', NULL)
+select dbo.[CharIndexRev]('123', '', 5)
+select dbo.[CharIndexRev]('', null, 4)
+select CharIndex('a', 'abc', -5)
